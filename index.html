@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Librería de Aldana</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f0f8ff;
+    }
+    h1, h2, h3 {
+      text-align: center;
+    }
+    .banner {
+      text-align: center;
+      font-weight: bold;
+      border: 2px solid #000;
+      padding: 20px;
+      background-color: #d0eaff;
+      margin-bottom: 20px;
+    }
+    .menu, .libros, .prestamos {
+      margin-top: 20px;
+    }
+    button {
+      margin: 5px;
+      padding: 10px;
+      cursor: pointer;
+    }
+    input, select {
+      margin: 10px 0;
+      padding: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="banner">
+    <p>*******************************************************</p>
+    <p>***********       BIENVENIDOS A LA   ****************</p>
+    <p>************     LIBRERÍA DE ALDANA   ****************</p>
+    <p>*************  LA MÁS COOL DE B/QUILLA  ***************</p>
+    <p>*******************************************************</p>
+  </div>
+
+  <div>
+    <label>Tu nombre: <input type="text" id="nombreInput" /></label>
+    <button onclick="iniciarSesion()">Entrar</button>
+  </div>
+
+  <div id="menuUsuario" class="menu" style="display:none;">
+    <h3>Menú Usuario</h3>
+    <button onclick="mostrarLibros()">Ver libros disponibles</button>
+    <button onclick="mostrarAlquiler()">Alquilar un libro</button>
+    <button onclick="verPrestamos()">Ver mis préstamos</button>
+    <button onclick="salir()">Salir</button>
+  </div>
+
+  <div id="menuAdmin" class="menu" style="display:none;">
+    <h3>Menú Admin</h3>
+    <button onclick="mostrarLibros()">Ver inventari
