@@ -59,4 +59,129 @@
 
   <div id="menuAdmin" class="menu" style="display:none;">
     <h3>Menú Admin</h3>
-    <button onclick="mostrarLibros()">Ver inventari
+    <button onclick="mostrarLibros()">Ver inventario</button>
+    <button onclick="agregarLibro()">Agregar libro</button>
+    <button onclick="removerLibro()">Remover libro</button>
+    <button onclick="salir()">Salir</button>
+  </div>
+
+  <div id="libros" class="libros"></div>
+  <div id="acciones"></div>
+  <div id="prestamos" class="prestamos"></div>
+
+  <script>
+    const inventario = {
+      "Cien años de soledad": true,
+      "Don Quijote de la Mancha": true,
+      "La Odisea": true,
+      "El Principito": true,
+      "El ruido de las cosas al caer": true
+    };
+
+    let prestamos = [];
+    let usuario = "";
+
+    function iniciarSesion() {
+      const nombre = document.getElementById("nombreInput").value.trim();
+      if (!nombre) return alert("Ingresa un nombre");
+
+      usuario = nombre;
+
+      if (nombre.toLowerCase() === "admin") {
+        const clave = prompt("Contraseña:");
+        if (clave === "123") {
+          document.getElementById("menuAdmin").style.display = "block";
+        } else {
+          alert("Contraseña incorrecta");
+        }
+      } else {
+        alert(`Gracias por visitarnos ${nombre}! La librería más elegante de Barranquilla desde 2000`);
+        document.getElementById("menuUsuario").style.display = "block";
+      }
+    }
+
+    function mostrarLibros() {
+      const contenedor = document.getElementById("libros");
+      contenedor.innerHTML = "<h3>Libros disponibles</h3>";
+      let i = 1;
+      for (const libro in inventario) {
+        const disponible = inventario[libro] ? "" : "(no disponible)";
+        contenedor.innerHTML += `<p>${i++}. ${libro} ${disponible}</p>`;
+      }
+    }
+
+    function mostrarAlquiler() {
+      const contenedor = document.getElementById("acciones");
+      contenedor.innerHTML = "<h3>Alquilar un libro</h3><select id='seleccionLibro'></select><br><button onclick='alquilarLibro()'>Alquilar</button>";
+
+      const select = document.getElementById("seleccionLibro");
+      select.innerHTML = "";
+      for (const libro in inventario) {
+        const option = document.createElement("option");
+        option.value = libro;
+        option.textContent = libro + (inventario[libro] ? "" : " (no disponible)");
+        option.disabled = !inventario[libro];
+        select.appendChild(option);
+      }
+    }
+
+    function alquilarLibro() {
+      const libro = document.getElementById("seleccionLibro").value;
+      if (inventario[libro]) {
+        inventario[libro] = false;
+        const fecha = new Date().toLocaleString();
+        prestamos.push([usuario, libro, fecha]);
+        alert(`Alquilaste "${libro}"`);
+        mostrarLibros();
+      } else {
+        alert("Ese libro no está disponible");
+      }
+    }
+
+    function verPrestamos() {
+      const contenedor = document.getElementById("prestamos");
+      contenedor.innerHTML = "<h3>Tus préstamos</h3>";
+      let encontrados = 0;
+      prestamos.forEach(p => {
+        if (p[0].toLowerCase() === usuario.toLowerCase()) {
+          contenedor.innerHTML += `<p>${p[1]} - ${p[2]}</p>`;
+          encontrados++;
+        }
+      });
+      if (!encontrados) {
+        contenedor.innerHTML += "<p>No has alquilado nada</p>";
+      }
+    }
+
+    function agregarLibro() {
+      const nuevo = prompt("Nombre del libro:");
+      if (nuevo in inventario) {
+        alert("Ya existe");
+      } else {
+        inventario[nuevo] = true;
+        alert(`"${nuevo}" agregado`);
+        mostrarLibros();
+      }
+    }
+
+    function removerLibro() {
+      const libros = Object.keys(inventario);
+      const opciones = libros.map((l, i) => `${i + 1}. ${l}`).join("\n");
+      const idx = parseInt(prompt(`Número del libro a remover:\n${opciones}`));
+      if (!isNaN(idx) && idx >= 1 && idx <= libros.length) {
+        const libro = libros[idx - 1];
+        delete inventario[libro];
+        alert(`"${libro}" eliminado`);
+        mostrarLibros();
+      } else {
+        alert("Número inválido");
+      }
+    }
+
+    function salir() {
+      alert("Gracias por venir");
+      location.reload();
+    }
+  </script>
+</body>
+</html>
