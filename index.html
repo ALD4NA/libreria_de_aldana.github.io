@@ -4,34 +4,16 @@
   <meta charset="UTF-8" />
   <title>Librería de Aldana</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background-color: #f0f8ff;
-    }
-    h1, h2, h3 {
-      text-align: center;
-    }
+    body { font-family: Arial, sans-serif; padding: 20px; background-color: #f0f8ff; }
+    h1, h2, h3 { text-align: center; }
     .banner {
-      text-align: center;
-      font-weight: bold;
-      border: 2px solid #000;
-      padding: 20px;
-      background-color: #d0eaff;
-      margin-bottom: 20px;
+      text-align: center; font-weight: bold;
+      border: 2px solid #000; padding: 20px;
+      background-color: #d0eaff; margin-bottom: 20px;
     }
-    .menu, .libros, .prestamos {
-      margin-top: 20px;
-    }
-    button {
-      margin: 5px;
-      padding: 10px;
-      cursor: pointer;
-    }
-    input, select {
-      margin: 10px 0;
-      padding: 8px;
-    }
+    .menu, .libros, .prestamos { margin-top: 20px; }
+    button { margin: 5px; padding: 10px; cursor: pointer; }
+    input, select { margin: 10px 0; padding: 8px; }
   </style>
 </head>
 <body>
@@ -54,7 +36,8 @@
     <button onclick="mostrarLibros()">Ver libros disponibles</button>
     <button onclick="mostrarAlquiler()">Alquilar un libro</button>
     <button onclick="verPrestamos()">Ver mis préstamos</button>
-    <button onclick="salir()">Salir</button>
+    <button onclick="donarLibro()">Donar un libro</button>
+    <button onclick="cerrarSesion()">Salir</button>
   </div>
 
   <div id="menuAdmin" class="menu" style="display:none;">
@@ -62,7 +45,7 @@
     <button onclick="mostrarLibros()">Ver inventario</button>
     <button onclick="agregarLibro()">Agregar libro</button>
     <button onclick="removerLibro()">Remover libro</button>
-    <button onclick="salir()">Salir</button>
+    <button onclick="cerrarSesion()">Cerrar sesión de admin</button>
   </div>
 
   <div id="libros" class="libros"></div>
@@ -70,7 +53,7 @@
   <div id="prestamos" class="prestamos"></div>
 
   <script>
-    const inventario = {
+    let inventario = {
       "Cien años de soledad": true,
       "Don Quijote de la Mancha": true,
       "La Odisea": true,
@@ -80,23 +63,31 @@
 
     let prestamos = [];
     let usuario = "";
+    let esAdmin = false;
 
     function iniciarSesion() {
       const nombre = document.getElementById("nombreInput").value.trim();
       if (!nombre) return alert("Ingresa un nombre");
 
       usuario = nombre;
+      document.getElementById("libros").innerHTML = "";
+      document.getElementById("acciones").innerHTML = "";
+      document.getElementById("prestamos").innerHTML = "";
 
       if (nombre.toLowerCase() === "admin") {
         const clave = prompt("Contraseña:");
         if (clave === "123") {
+          esAdmin = true;
           document.getElementById("menuAdmin").style.display = "block";
+          document.getElementById("menuUsuario").style.display = "none";
         } else {
           alert("Contraseña incorrecta");
         }
       } else {
+        esAdmin = false;
         alert(`Gracias por visitarnos ${nombre}! La librería más elegante de Barranquilla desde 2000`);
         document.getElementById("menuUsuario").style.display = "block";
+        document.getElementById("menuAdmin").style.display = "none";
       }
     }
 
@@ -153,9 +144,22 @@
       }
     }
 
+    function donarLibro() {
+      const nuevo = prompt("Nombre del libro que deseas donar:");
+      if (!nuevo) return;
+      if (inventario[nuevo]) {
+        alert("Ese libro ya está en la librería");
+      } else {
+        inventario[nuevo] = true;
+        alert(`¡Gracias por donar "${nuevo}"!`);
+        mostrarLibros();
+      }
+    }
+
     function agregarLibro() {
       const nuevo = prompt("Nombre del libro:");
-      if (nuevo in inventario) {
+      if (!nuevo) return;
+      if (inventario[nuevo]) {
         alert("Ya existe");
       } else {
         inventario[nuevo] = true;
@@ -178,9 +182,16 @@
       }
     }
 
-    function salir() {
-      alert("Gracias por venir");
-      location.reload();
+    function cerrarSesion() {
+      usuario = "";
+      esAdmin = false;
+      document.getElementById("menuAdmin").style.display = "none";
+      document.getElementById("menuUsuario").style.display = "none";
+      document.getElementById("libros").innerHTML = "";
+      document.getElementById("acciones").innerHTML = "";
+      document.getElementById("prestamos").innerHTML = "";
+      document.getElementById("nombreInput").value = "";
+      alert("Sesión cerrada");
     }
   </script>
 </body>
